@@ -71,42 +71,96 @@ class Hello(object):
             os.mkdir(data_dir+"/downloads")
         if not os.path.isdir(data_dir+"/images"):
             os.mkdir(data_dir+"/images")
-    #@+node:2015.20150330144929.1713: *3* aaa
+    #@+node:2015.20150330144929.1713: *3* CheckGearSize
     @cherrypy.expose
     # N 為齒數, M 為模數, P 為壓力角
-    def aaa(self, N=20, M=5, P=15):
-        outstring = '''
-    <!DOCTYPE html> 
-    <html>
-    <head>
-    <meta http-equiv="content-type" content="text/html;charset=utf-8">
-    <!-- 載入 brython.js -->
-    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
-    <script src="/static/Cango2D.js" type="text/javascript"></script>
-    <script src="/static/gearUtils-04.js" type="text/javascript"></script>
-    </head>
-    <!-- 啟動 brython() -->
-    <body onload="brython()">
-        
-    <form method=POST action=index_orig>
+    def CheckGearSize(self, n_g1=15, n_g2=24,M=5, P=15):
 
-    <input type=submit value=學號>
-    </form>
-    </body>
-    </html>
-    '''
+         n_g1 = int(str(n_g1))
+         n_g2 = int(str(n_g2))
 
-        return outstring
+         if n_g1 < 15:
+            return "齒輪1 低於15" + self.DesignGear()
+         elif n_g1 > 80:
+            return "齒輪1 超過80 " + self.DesignGear()
+         elif n_g2 < 15:
+            return "齒輪2 低於15 " + self.DesignGear()
+         elif n_g2 > 80:
+            return "齒輪2 超過80 " + self.DesignGear()
+         else:
+            cherrypy.session['g1'] =  n_g1
+            cherrypy.session['g2'] =  n_g2
+            
+            outstring = '''
+                <!DOCTYPE html> 
+                <html>
+                <head>
+                齒輪1='''+str(n_g1)+'''<br />
+                齒輪2='''+str(n_g2)+'''<br />
+                <br /><a href="\ShowGear\">確定</a><br />
+                <br /><a href="\DesignGear\">修改</a><br />
+                <head>
+                </html>
+            '''
+            return outstring
+    #@+node:2015.20150627113431.1: *3* CheckGearSize1
+    @cherrypy.expose
+    # N 為齒數, M 為模數, P 為壓力角
+    def CheckGearSize1(self, n_g1=15, n_g2=24,n_g3=24,n_g4=15,M=5, P=15):
+
+         n_g1 = int(str(n_g1))
+         n_g2 = int(str(n_g2))
+         n_g3 = int(str(n_g3))
+         n_g4 = int(str(n_g4))
+
+         if n_g1 < 15:
+            return "齒輪1 低於15" + self.DesignGear1()
+         elif n_g1 > 80:
+            return "齒輪1 超過80 " + self.DesignGear1()
+         elif n_g2 < 15:
+            return "齒輪2 低於15 " + self.DesignGear1()
+         elif n_g2 > 80:
+            return "齒輪2 超過80 " + self.DesignGear1()
+         elif n_g3 < 15:
+            return "齒輪3 低於15" + self.DesignGear1()
+         elif n_g3 > 80:
+            return "齒輪3 超過80 " + self.DesignGear1()
+         elif n_g4 < 15:
+            return "齒輪4 低於15 " + self.DesignGear1() 
+         elif n_g4 > 80:
+            return "齒輪4 超過80 " + self.DesignGear1()
+         elif n_g2!=n_g3:
+            return "齒輪2跟齒輪3不同可能會有干涉的問題 " + self.DesignGear1()  
+         else:
+            cherrypy.session['g1'] =  n_g1
+            cherrypy.session['g2'] =  n_g2
+            cherrypy.session['g3'] =  n_g3
+            cherrypy.session['g4'] =  n_g4
+            
+            outstring = '''
+                <!DOCTYPE html> 
+                <html>
+                <head>
+                齒輪1='''+str(n_g1)+'''<br />
+                齒輪2='''+str(n_g2)+'''<br />
+                齒輪3='''+str(n_g3)+'''<br />
+                齒輪4='''+str(n_g4)+'''<br />
+                <br /><a href="\ShowGear1\">繪製齒輪</a><br />
+                <br /><a href="\DesignGear1\">重新設計</a><br />
+                <head>
+                </html>
+            '''
+            return outstring
     #@+node:2014fall.20141212095015.1778: *3* index_orig
     # 以 @ 開頭的 cherrypy.expose 為 decorator, 用來表示隨後的成員方法, 可以直接讓使用者以 URL 連結執行
     @cherrypy.expose
     # index 方法為 CherryPy 各類別成員方法中的內建(default)方法, 當使用者執行時未指定方法, 系統將會優先執行 index 方法
     # 有 self 的方法為類別中的成員方法, Python 程式透過此一 self 在各成員方法間傳遞物件內容
-    def index_orig(self, toprint="a_40223211"):
+    def index_orig(self, toprint="a_40223220"):
         return toprint
     #@+node:2014fall.20141212095015.1779: *3* hello
     @cherrypy.expose
-    def hello(self, toprint="Hello World!"):
+    def hello(self, toprint="Hello World! I am 40223211"):
         return toprint
     #@+node:2014fall.20141215194146.1791: *3* index
     @cherrypy.expose
@@ -120,6 +174,7 @@ class Hello(object):
         # 印出讓使用者輸入的超文件表單
         outstring = '''
     a_40223211
+    doCheck(15)
     '''
 
         return outstring
@@ -211,10 +266,40 @@ class Hello(object):
     '''
 
         return outstring
-    #@+node:2015.20150331094055.1733: *3* threeDgear
+    #@+node:2015.20150331094055.1733: *3* DesignGear
     @cherrypy.expose
     # N 為齒數, M 為模數, P 為壓力角
-    def threeDgear(self, N1=15, N2=24,M=5, P=15):
+    def DesignGear(self, n_g1=15, n_g2=24,M=5, P=15):
+        outstring = '''
+    <!DOCTYPE html> 
+    <html>
+    <head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8">
+    <!-- 載入 brython.js -->
+    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
+    <script src="/static/Cango2D.js" type="text/javascript"></script>
+    <script src="/static/gearUtils-04.js" type="text/javascript"></script>
+    </head>
+    <!-- 啟動 brython() -->
+    <body onload="brython()">
+
+    <form method=\"post\" action=\"CheckGearSize\">
+    <fieldset>
+
+    齒數1(範圍:15~80):<input type=text name=n_g1 value='''+str(n_g1)+'''><br />
+    齒數2(範圍:15~80):<input type=text name=n_g2 value = '''+str(n_g2)+'''><br />
+
+    <input type=\"submit\" value=\"繪製齒輪\">
+    </form>
+    </body>
+    </html>
+    '''
+      
+        return outstring
+    #@+node:2015.20150622102244.1: *3* DesignGear1
+    @cherrypy.expose
+    # N 為齒數, M 為模數, P 為壓力角
+    def DesignGear1(self, n_g1=15, n_g2=24,n_g3=24,n_g4=15,M=5, P=15):
         outstring = '''
     <!DOCTYPE html> 
     <html>
@@ -228,14 +313,16 @@ class Hello(object):
     <!-- 啟動 brython() -->
     <body onload="brython()">
         
-    <form method=\"post\" action=\"mygeartest2\">
-    下面請出入數值<fieldset>
+    <form method=\"post\" action=\"CheckGearSize1\">
+    <fieldset>
+
+    齒數1(範圍:15~80):<input type=text name=n_g1 value='''+str(n_g1)+'''><br />
+    齒數2(範圍:15~80):<input type=text name=n_g2 value='''+str(n_g2)+'''><br />
+    齒數3(範圍:15~80):<input type=text name=n_g3 value='''+str(n_g3)+'''><br />
+    齒數4(範圍:15~80):<input type=text name=n_g4 value='''+str(n_g4)+'''><br />
 
 
-    齒數1(範圍:15~80):<br /><input type=\"text\" name=\"N1\"><br />
-    齒數2(範圍:15~80):<br /><input type=\"text\" name=\"N2\"><br />
-
-    <input type=\"submit\" value=\"繪製\">
+    <input type=\"submit\" value=\"繪製齒輪\">
     </form>
     </body>
     </html>
@@ -260,42 +347,6 @@ class Hello(object):
     <body onload="brython()">
         
     <form method=\"post\" action=\"mygeartest3\">
-    <fieldset>
-
-    齒數1(範圍:15~80):<br /><input type=\"text\" name=\"N1\"><br />
-    齒數2(範圍:15~80):<br /><input type=\"text\" name=\"N2\"><br />
-    齒數3(範圍:15~80):<br /><input type=\"text\" name=\"N3\"><br />
-    齒數4(範圍:15~80):<br /><input type=\"text\" name=\"N4\"><br />
-    齒數5(範圍:15~80):<br /><input type=\"text\" name=\"N5\"><br />
-    齒數6(範圍:15~80):<br /><input type=\"text\" name=\"N6\"><br />
-    齒數7(範圍:15~80):<br /><input type=\"text\" name=\"N7\"><br />
-
-
-    <input type=\"submit\" value=\"send\">
-    </form>
-    </body>
-    </html>
-    '''
-      
-        return outstring
-    #@+node:2015.20150622102244.1: *3* threeDgear2
-    @cherrypy.expose
-    # N 為齒數, M 為模數, P 為壓力角
-    def threeDgear2(self, N1=15, N2=24,N3=24,N4=24,N5=24,N6=24,N7=24,M=5, P=15):
-        outstring = '''
-    <!DOCTYPE html> 
-    <html>
-    <head>
-    <meta http-equiv="content-type" content="text/html;charset=utf-8">
-    <!-- 載入 brython.js -->
-    <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
-    <script src="/static/Cango2D.js" type="text/javascript"></script>
-    <script src="/static/gearUtils-04.js" type="text/javascript"></script>
-    </head>
-    <!-- 啟動 brython() -->
-    <body onload="brython()">
-        
-    <form method=\"post\" action=\"mygeartest4\">
     <fieldset>
 
     齒數1(範圍:15~80):<br /><input type=\"text\" name=\"N1\"><br />
@@ -593,28 +644,46 @@ class Hello(object):
     '''
 
         return outstring
-    #@+node:amd.20150415215023.1: *3* mygeartest2
+    #@+node:amd.20150415215023.1: *3* ShowGear
     @cherrypy.expose
     # N 為齒數, M 為模數, P 為壓力角
-    def mygeartest2(self, N1=15, N2=24,M=5, P=15):
+    def ShowGear(self, n_g1=15, n_g2=24,M=5, P=15):
+        g1= int(cherrypy.session.get('g1'))
+        g2= int(cherrypy.session.get('g2'))
+        
+        m_g1 = 20*g1/2
+        m_g2 = 20*g2/2
+        
+        if m_g1>=m_g2:
+            x=m_g1
+        else:
+            x=m_g2
         outstring = '''
     <!DOCTYPE html> 
     <html>
     <head>
+
+    <form method=\"post\" action=\"DesignGear\">
+
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <!-- 載入 brython.js -->
     <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
     <script src="/static/Cango2D.js" type="text/javascript"></script>
     <script src="/static/gearUtils-04.js" type="text/javascript"></script>
+
+
+    <input type=\"submit\" value=\"清除資料\">
+    </form>
+
+
     </head>
     <!-- 啟動 brython() -->
     <body onload="brython()">
 
-    <form method=\"post\" action=\"threeDgear\">
 
     <fieldset>
 
-     <legend>最下面有返回按鈕:</legend>
+     <legend>齒輪組合:</legend>
 
     <!-- 以下為 canvas 畫圖程式 -->
     <script type="text/python">
@@ -636,52 +705,50 @@ class Hello(object):
     # 模數決定齒的尺寸大小, 囓合齒輪組必須有相同的模數與壓力角
     # 壓力角 pa 單位為角度
 
+    x='''+str(x)+'''
+    x=x+20
+
     pa = 20
     # m 為模數
     m = 20
     # 第1齒輪齒數
-    n_g1 = '''+str(N1)+'''
+    n_g1 ='''+str( g1)+'''
     # 第2齒輪齒數
-    n_g2 = '''+str(N2)+'''
-
+    n_g2 ='''+str( g2)+'''
 
     # 計算兩齒輪的節圓半徑
     rp_g1 = m*n_g1/2
     rp_g2 = m*n_g2/2
+
+    y=rp_g1+20
 
 
     # 將第1齒輪順時鐘轉 90 度
     # 使用 ctx.save() 與 ctx.restore() 以確保各齒輪以相對座標進行旋轉繪圖
     ctx.save()
     # translate to the origin of second gear
-    ctx.translate(820,820)
+    ctx.translate(x,y)
     # rotate to engage
     ctx.rotate(pi)
     # put it back
-    ctx.translate(-820,-820)
-    spur.Spur(ctx).Gear(820,820,rp_g1,n_g1, pa, "red")
+    ctx.translate(-x,-y)
+    spur.Spur(ctx).Gear(x,y,rp_g1,n_g1, pa, "blue")
     ctx.restore()
 
     # 將第2齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
     ctx.save()
     # translate to the origin of second gear
-    ctx.translate(820,820+rp_g1+rp_g2)
+    ctx.translate(x,y+rp_g1+rp_g2)
     # rotate to engage
     ctx.rotate(-pi/n_g2)
     # put it back
-    ctx.translate(-820,-(820+rp_g1+rp_g2))
-    spur.Spur(ctx).Gear(820,820+rp_g1+rp_g2,rp_g2,n_g2, pa, "green")
+    ctx.translate(-x,-(y+rp_g1+rp_g2))
+    spur.Spur(ctx).Gear(x,y+rp_g1+rp_g2,rp_g2,n_g2, pa, "black")
     ctx.restore()
 
 
     </script>
     <canvas id="plotarea" width="3800" height="4000"></canvas>
-
-    <input type=\"submit\" value=\"內容清除\">
-    <canvas id="plotarea" width="0" height="0"></canvas>
-
-    <input type=\"submit\" value=\"錯誤清除\">
-    </form>
 
     </body>
     </html>
@@ -758,7 +825,7 @@ class Hello(object):
     rp_g6 = m*n_g6/2
     rp_g7 = m*n_g7/2
 
-    ##############################################################################################
+    ##########################################################################
 
     # 將第1齒輪順時鐘轉 90 度
     # 使用 ctx.save() 與 ctx.restore() 以確保各齒輪以相對座標進行旋轉繪圖
@@ -772,7 +839,7 @@ class Hello(object):
     spur.Spur(ctx).Gear(820,820,rp_g1,n_g1, pa, "blue")
     ctx.restore()
 
-    ###############################################################################################
+    ##########################################################################
 
     # 將第2齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
     ctx.save()
@@ -785,7 +852,7 @@ class Hello(object):
     spur.Spur(ctx).Gear(820,820+rp_g1+rp_g2,rp_g2,n_g2, pa, "black")
     ctx.restore()
 
-    ##############################################################################################
+    ##########################################################################
 
     # 將第3齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
     ctx.save()
@@ -798,7 +865,7 @@ class Hello(object):
     spur.Spur(ctx).Gear(820,820+rp_g1+2*rp_g2+rp_g3,rp_g3,n_g3, pa, "black")
     ctx.restore()
 
-    ##############################################################################################
+    ##########################################################################
 
     # 將第4齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
     ctx.save()
@@ -812,7 +879,7 @@ class Hello(object):
     spur.Spur(ctx).Gear(820,820+rp_g1+2*rp_g2+2*rp_g3+rp_g4,rp_g4,n_g4, pa, "black")
     ctx.restore()
 
-    ##############################################################################################
+    ##########################################################################
 
     # 將第5齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
     ctx.save()
@@ -826,7 +893,7 @@ class Hello(object):
     spur.Spur(ctx).Gear(820,820+rp_g1+2*rp_g2+2*rp_g3+2*rp_g4+rp_g5,rp_g5,n_g5, pa, "black")
     ctx.restore()
 
-    ##############################################################################################
+    ##########################################################################
 
     # 將第6齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
     ctx.save()
@@ -840,7 +907,7 @@ class Hello(object):
     spur.Spur(ctx).Gear(820,820+rp_g1+2*rp_g2+2*rp_g3+2*rp_g4+2*rp_g5+rp_g6,rp_g6,n_g6, pa, "black")
     ctx.restore()
 
-    ##############################################################################################
+    ##########################################################################
 
     # 將第7齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
     ctx.save()
@@ -854,7 +921,8 @@ class Hello(object):
     spur.Spur(ctx).Gear(820,820+rp_g1+2*rp_g2+2*rp_g3+2*rp_g4+2*rp_g5+2*rp_g6+rp_g7,rp_g7,n_g7, pa, "black")
     ctx.restore()
 
-    ##############################################################################################
+    ##########################################################################
+
 
     </script>
     <canvas id="plotarea" width="3800" height="12000"></canvas>
@@ -867,25 +935,43 @@ class Hello(object):
     '''
 
         return outstring
-    #@+node:2015.20150622102228.1: *3* mygeartest4
+    #@+node:2015.20150622102228.1: *3* ShowGear1
     @cherrypy.expose
     # N 為齒數, M 為模數, P 為壓力角
-    def mygeartest4(self, N1=15, N2=24,N3=24,N4=24,N5=24,N6=24,N7=24,M=5, P=15):
+    def ShowGear1(self, n_g1=15, n_g2=24,n_g3=24,n_g4=15,M=5, P=15):
+        g1= int(cherrypy.session.get('g1'))
+        g2= int(cherrypy.session.get('g2'))
+        g3= int(cherrypy.session.get('g3'))
+        g4= int(cherrypy.session.get('g4'))
+         
+        m_g1 = 20*g1/2
+        m_g2 = 20*g2/2
+        
+        if m_g1>=m_g2:
+            x=m_g1
+        else:
+            x=m_g2
+
         outstring = '''
     <!DOCTYPE html> 
     <html>
     <head>
+
+    <form method=\"post\" action=\"DesignGear1\">
+    <fieldset>
+
     <meta http-equiv="content-type" content="text/html;charset=utf-8">
     <!-- 載入 brython.js -->
     <script type="text/javascript" src="/static/Brython3.1.1-20150328-091302/brython.js"></script>
     <script src="/static/Cango2D.js" type="text/javascript"></script>
     <script src="/static/gearUtils-04.js" type="text/javascript"></script>
+
+    <input type=\"submit\" value=\"清除資料\">
+    </form>
+
     </head>
     <!-- 啟動 brython() -->
     <body onload="brython()">
-
-    <form method=\"post\" action=\"threeDgear2\">
-    <fieldset>
 
      <legend>最下面有返回按鈕:</legend>
 
@@ -913,144 +999,89 @@ class Hello(object):
     # m 為模數
     m = 20
 
+    x='''+str(x)+'''
+    x=x+20
+
     # 第1齒輪齒數
-    n_g1 = '''+str(N1)+'''
+    n_g1 = '''+str( g1)+'''
     # 第2齒輪齒數
-    n_g2 = '''+str(N2)+'''
+    n_g2 = '''+str( g2)+'''
     # 第3齒輪齒數
-    n_g3 = '''+str(N3)+'''
+    n_g3 = '''+str( g3)+'''
     # 第4齒輪齒數
-    n_g4 = '''+str(N4)+'''
-    # 第5齒輪齒數
-    n_g5 = '''+str(N5)+'''
-    # 第6齒輪齒數
-    n_g6 = '''+str(N6)+'''
-    # 第7齒輪齒數
-    n_g7 = '''+str(N7)+'''
+    n_g4 = '''+str( g4)+'''
+
 
     # 計算兩齒輪的節圓半徑
     rp_g1 = m*n_g1/2
     rp_g2 = m*n_g2/2
     rp_g3 = m*n_g3/2
     rp_g4 = m*n_g4/2
-    rp_g5 = m*n_g5/2
-    rp_g6 = m*n_g6/2
-    rp_g7 = m*n_g7/2
 
-    ##############################################################################################
+    y=rp_g1+20
 
     # 將第1齒輪順時鐘轉 90 度
     # 使用 ctx.save() 與 ctx.restore() 以確保各齒輪以相對座標進行旋轉繪圖
     ctx.save()
     # translate to the origin of second gear
-    ctx.translate(820,820)
+    ctx.translate(x,y)
     # rotate to engage
-    ctx.rotate(pi)
+    ctx.rotate(-pi)
     # put it back
-    ctx.translate(-820,-820)
-    spur.Spur(ctx).Gear(820,820,rp_g1,n_g1, pa, "blue")
+    ctx.translate(-x,-y)
+    spur.Spur(ctx).Gear(x,y,rp_g1,n_g1, pa, "blue")
     ctx.restore()
 
-    ###############################################################################################
+
 
     # 將第2齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
     ctx.save()
     # translate to the origin of second gear
-    ctx.translate(820,820+rp_g1+rp_g2)
+    ctx.translate(x,y+rp_g1+rp_g2)
     # rotate to engage
     ctx.rotate(-pi/n_g2)
     # put it back
-    ctx.translate(-820,-(820+rp_g1+rp_g2))
-    spur.Spur(ctx).Gear(820,820+rp_g1+rp_g2,rp_g2,n_g2, pa, "black")
+    ctx.translate(-x,-(y+rp_g1+rp_g2))
+    spur.Spur(ctx).Gear(x,y+rp_g1+rp_g2,rp_g2,n_g2, pa, "black")
     ctx.restore()
 
-    ##############################################################################################
+
 
     # 將第3齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
     ctx.save()
     # translate to the origin of second gear
-    ctx.translate(820+rp_g2+rp_g3,820+rp_g1+rp_g2)
+    ctx.translate(x+rp_g2+rp_g3,y+rp_g1+rp_g2)
     # rotate to engage
 
-    e=(n_g2%2)-1
+    e1=((n_g2-30)/2)%2-1
+    e=-pi/2-pi/n_g3*e1
 
-    ctx.rotate(-pi/2+(pi/n_g3*e))
+    ctx.rotate(e)
     # put it back
-    ctx.translate(-(820+rp_g2+rp_g3),-(820+rp_g1+rp_g2))
-    spur.Spur(ctx).Gear(820+rp_g2+rp_g3+20,820+rp_g1+rp_g2,rp_g3,n_g3, pa, "black")
+    ctx.translate(-(x+rp_g2+rp_g3),-(y+rp_g1+rp_g2))
+    spur.Spur(ctx).Gear(x+rp_g2+rp_g3,y+rp_g1+rp_g2,rp_g3,n_g3, pa, "black")
     ctx.restore()
 
-    ##############################################################################################
 
     # 將第4齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
     ctx.save()
     # translate to the origin of second gear
-    ctx.translate(820,820+rp_g1+2*rp_g2+2*rp_g3+rp_g4)
+    ctx.translate(x+rp_g2+rp_g3,y+rp_g1+rp_g2+rp_g3+rp_g4)
     # rotate to engage
 
     a=(n_g2%2)+(n_g3%2)-1
 
     ctx.rotate(-pi/n_g4*a)
     # put it back
-    ctx.translate(-820,-(820+rp_g1+2*rp_g2+2*rp_g3+rp_g4))
-    spur.Spur(ctx).Gear(820,820+rp_g1+2*rp_g2+2*rp_g3+rp_g4,rp_g4,n_g4, pa, "black")
+    ctx.translate(-(x+rp_g2+rp_g3),-(y+rp_g1+rp_g2+rp_g3+rp_g4))
+    spur.Spur(ctx).Gear(x+rp_g2+rp_g3,y+rp_g1+rp_g2+rp_g3+rp_g4,rp_g4,n_g4, pa, "black")
     ctx.restore()
 
-    ##############################################################################################
 
-    # 將第5齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
-    ctx.save()
-    # translate to the origin of second gear
-    ctx.translate(820,820+rp_g1+2*rp_g2+2*rp_g3+2*rp_g4+rp_g5)
-    # rotate to engage
-
-    b=(n_g2%2)+(n_g3%2)+(n_g4%2)-2
-
-    ctx.rotate(-pi/n_g5*b)
-    # put it back
-    ctx.translate(-820,-(820+rp_g1+2*rp_g2+2*rp_g3+2*rp_g4+rp_g5))
-    spur.Spur(ctx).Gear(820,820+rp_g1+2*rp_g2+2*rp_g3+2*rp_g4+rp_g5,rp_g5,n_g5, pa, "black")
-    ctx.restore()
-
-    ##############################################################################################
-
-    # 將第6齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
-    ctx.save()
-    # translate to the origin of second gear
-    ctx.translate(820,820+rp_g1+2*rp_g2+2*rp_g3+2*rp_g4+2*rp_g5+rp_g6)
-    # rotate to engage
-
-    c=(n_g2%2)+(n_g3%2)+(n_g4%2)+(n_g5%2)-3
-
-    ctx.rotate(-pi/n_g6*c)
-    # put it back
-    ctx.translate(-820,-(820+rp_g1+2*rp_g2+2*rp_g3+2*rp_g4+2*rp_g5+rp_g6))
-    spur.Spur(ctx).Gear(820,820+rp_g1+2*rp_g2+2*rp_g3+2*rp_g4+2*rp_g5+rp_g6,rp_g6,n_g6, pa, "black")
-    ctx.restore()
-
-    ##############################################################################################
-
-    # 將第7齒輪逆時鐘轉 90 度之後, 再多轉一齒, 以便與第1齒輪進行囓合
-    ctx.save()
-    # translate to the origin of second gear
-    ctx.translate(820,820+rp_g1+2*rp_g2+2*rp_g3+2*rp_g4+2*rp_g5+2*rp_g6+rp_g7)
-    # rotate to engage
-
-    d=(n_g2%2)+(n_g3%2)+(n_g4%2)+(n_g5%2)+(n_g6%2)-4
-
-    ctx.rotate(-pi/n_g7*d)
-    # put it back
-    ctx.translate(-820,-(820+rp_g1+2*rp_g2+2*rp_g3+2*rp_g4+2*rp_g5+2*rp_g6+rp_g7))
-    spur.Spur(ctx).Gear(820,820+rp_g1+2*rp_g2+2*rp_g3+2*rp_g4+2*rp_g5+2*rp_g6+rp_g7,rp_g7,n_g7, pa, "black")
-    ctx.restore()
-
-    ##############################################################################################
 
     </script>
     <canvas id="plotarea" width="3800" height="12000"></canvas>
 
-    <input type=\"submit\" value=\"return\">
-    </form>
 
     </body>
     </html>

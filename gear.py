@@ -166,7 +166,7 @@ class Gear(object):
     @cherrypy.expose
     def gear_width(self, horsepower=100, rpm=1000, ratio=4, toothtype=1, safetyfactor=2, material_serialno=1, npinion=18):
         SQLite連結 = Store(SQLiteWriter(_curdir+"/lewis.db", frozen=True))
-        outstring = ""
+        outstring = ''
         # 根據所選用的齒形決定壓力角
         if(toothtype == 1 or toothtype == 2):
             壓力角 = 20
